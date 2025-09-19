@@ -1,0 +1,249 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="quiz-container">
+    <p id="Question" style="font-size: 30px; font-weight: bold;">Who is the founder of Pakistan ?</p>
+        <ul id="quizOption">
+            <li>Quaid</li>
+            <li>Altaf bhai</li>
+            <li>Bhutto</li>
+            <li>Falana</li>
+        </ul>
+    </div>
+    <div id="score" style="font-size: 30px;"></div>
+    <button id="next-btn" onclick="goTONext()">Next Question</button>
+    <div class="resul-box"> 
+       <div style="display: none;"> <h2> Quiz Result </h2>
+        <p id="correct"></p>
+        <p id="wrong"></p>
+        <p id="percentage"></p></div>
+
+    </div>
+    <script src="index.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>General Knowledge Q/A</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+    }
+
+    .quiz-container {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 400px;
+    }
+
+    #options {
+      margin-top: 15px;
+    }
+
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      transition: background-color 0.3s;
+    }
+
+    .option:hover {
+      background-color: skyblue;
+    }
+
+    .option input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .option.selected {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      align-items: center;
+    }
+
+    .pass {
+      color: green;
+    }
+
+    .fail {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2 id="question">Loading...</h2>
+    <div id="options"></div>
+    <button id="nextBtn" disabled>Next Question</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Pakistan ka national animal kya hai?",
+        options: ["Lion", "Markhor", "Tiger", "Elephant"],
+        answer: "Markhor"
+      },
+      {
+        question: "Jupiter kaun sa planet number hai suraj se?",
+        options: ["2nd", "3rd", "4th", "5th"],
+        answer: "5th"
+      },
+      {
+        question: "Computer ka brain kise kehte hain?",
+        options: ["Mouse", "CPU", "Monitor", "Keyboard"],
+        answer: "CPU"
+      },
+      {
+        question: "World War II kis saal khatam hui?",
+        options: ["1945", "1939", "1950", "1918"],
+        answer: "1945"
+      },
+      {
+        question: "Islamabad Pakistan ka capital kab bana?",
+        options: ["1959", "1967", "1960", "1970"],
+        answer: "1960"
+      },
+      {
+        question: "Water ka chemical formula kya hai?",
+        options: ["CO2", "O2", "H2O", "NaCl"],
+        answer: "H2O"
+      },
+      {
+        question: "Quaid-e-Azam ka asli naam kya tha?",
+        options: ["Allama Iqbal", "Liaquat Ali", "Muhammad Ali Jinnah", "Zulfiqar Ali"],
+        answer: "Muhammad Ali Jinnah"
+      },
+      {
+        question: "Fastest animal on land konsa hai?",
+        options: ["Horse", "Cheetah", "Tiger", "Lion"],
+        answer: "Cheetah"
+      },
+      {
+        question: "Sun kis gas se mil kar bana hai?",
+        options: ["Oxygen", "Nitrogen", "Hydrogen", "Carbon"],
+        answer: "Hydrogen"
+      },
+      {
+        question: "UNO ka headquarter kahan hai?",
+        options: ["London", "New York", "Paris", "Geneva"],
+        answer: "New York"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let correctAnswers = 0;
+    let wrongAnswers = 0;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const nextBtn = document.getElementById('nextBtn');
+    const resultEl = document.getElementById('result');
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}: ${q.question}`;
+      optionsEl.innerHTML = '';
+      nextBtn.disabled = true;
+
+      q.options.forEach(option => {
+        const label = document.createElement('label');
+        label.classList.add('option');
+
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'option';
+        input.value = option;
+
+        input.addEventListener('change', () => {
+          nextBtn.disabled = false;
+
+          // Remove 'selected' class from all
+          const allOptions = document.querySelectorAll('.option');
+          allOptions.forEach(opt => opt.classList.remove('selected'));
+
+          label.classList.add('selected');
+        });
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(option));
+        optionsEl.appendChild(label);
+      });
+    }
+
+    nextBtn.addEventListener('click', () => {
+      const selected = document.querySelector('input[name="option"]:checked');
+
+      if (selected) {
+        const answer = selected.value;
+        if (answer === questions[currentQuestion].answer) {
+          score += 10;
+          correctAnswers++;
+        } else {
+          wrongAnswers++;
+        }
+
+        currentQuestion++;
+
+        if (currentQuestion < questions.length) {
+          loadQuestion();
+        } else {
+          showResult();
+        }
+      }
+    });
+
+    function showResult() {
+      questionEl.style.display = 'none';
+      optionsEl.style.display = 'none';
+      nextBtn.style.display = 'none';
+
+      const percentage = (score / (questions.length * 10)) * 100;
+      const status = percentage >= 40 ? "Pass" : "Failed";
+      const colorClass = percentage >= 40 ? "pass" : "fail";
+
+      resultEl.innerHTML = `
+        <p>Correct Answer: ${correctAnswers}</p>
+        <p>Wrong Question: ${wrongAnswers}</p>
+        <p>Percentage: ${percentage.toFixed(2)}%</p>
+        <p class="${colorClass}">${status}</p>
+      `;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
+
