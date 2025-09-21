@@ -30,6 +30,7 @@
 </html> -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>General Knowledge Q/A</title>
@@ -46,8 +47,11 @@
       background: #fff;
       padding: 20px 30px;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+
     }
 
     #options {
@@ -100,6 +104,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="quiz-container">
     <h2 id="question">Loading...</h2>
@@ -166,6 +171,9 @@
     let score = 0;
     let correctAnswers = 0;
     let wrongAnswers = 0;
+    let userAnswers = []; // <-- naye array me har jawab save hoga
+
+
 
     const questionEl = document.getElementById('question');
     const optionsEl = document.getElementById('options');
@@ -208,6 +216,12 @@
 
       if (selected) {
         const answer = selected.value;
+        userAnswers.push({
+          question: questions[currentQuestion].question,
+          selected: answer,
+          correct: questions[currentQuestion].answer
+        });
+
         if (answer === questions[currentQuestion].answer) {
           score += 10;
           correctAnswers++;
@@ -234,16 +248,41 @@
       const status = percentage >= 40 ? "Pass" : "Failed";
       const colorClass = percentage >= 40 ? "pass" : "fail";
 
-      resultEl.innerHTML = `
-        <p>Correct Answer: ${correctAnswers}</p>
-        <p>Wrong Question: ${wrongAnswers}</p>
-        <p>Percentage: ${percentage.toFixed(2)}%</p>
-        <p class="${colorClass}">${status}</p>
-      `;
+      // resultEl.innerHTML = `
+      //   <p>Correct Answer: ${correctAnswers}</p>
+      //   <p>Wrong Question: ${wrongAnswers}</p>
+      //   <p>Percentage: ${percentage.toFixed(2)}%</p>
+      //   <p class="${colorClass}">${status}</p>
+      // `; 
+      let summary = `
+  <p>Correct Answers: ${correctAnswers}</p>
+  <p>Wrong Answers: ${wrongAnswers}</p>
+  <p>Percentage: ${percentage.toFixed(2)}%</p>
+  <p class="${colorClass}">${status}</p>
+  <hr>
+  <h3>Question Summary:</h3>
+`;
+
+      userAnswers.forEach((item, index) => {
+        const isCorrect = item.selected === item.correct;
+        summary += `
+    <p>
+      <strong>Q${index + 1}:</strong> ${item.question}<br>
+      <span style="color: ${isCorrect ? 'green' : 'red'};">
+        Tumhara jawab: ${item.selected} (${isCorrect ? 'Sahi' : 'Ghalat'})
+      </span><br>
+      ${!isCorrect ? `<span style="color: green;">Sahi jawab: ${item.correct}</span><br>` : ''}
+    </p>
+    <hr>
+  `;
+      });
+
+      resultEl.innerHTML = summary;
+
     }
 
     loadQuestion();
   </script>
 </body>
-</html>
 
+</html>
